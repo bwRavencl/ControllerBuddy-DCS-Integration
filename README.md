@@ -4,7 +4,7 @@
 GNU General Public License v2.0
 
 #### Description:
-This is a small Lua script for your DCS `Scripts` folder that makes using [ControllerBuddy](https://github.com/bwRavencl/ControllerBuddy) with [DCS World](https://www.digitalcombatsimulator.com) even more comfortable.  
+This is a small Lua script for your DCS `Scripts` folder that makes using [ControllerBuddy](https://controllerbuddy.org) with [DCS World](https://www.digitalcombatsimulator.com) even more comfortable.  
 The script automatically starts ControllerBuddy in local mode with a profile that matches the current player aircraft when entering a mission.  
 When the player switches between aircraft the script will automatically intruct ControllerBuddy to load the correct profile for the newly selected aircraft.
 
