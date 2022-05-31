@@ -1,7 +1,7 @@
 ## ControllerBuddy-DCS-Integration
 
 #### License Information:
-GNU General Public License v2.0
+GNU General Public License v3.0
 
 #### Description:
 This is a small Lua script for your DCS `Scripts` folder that makes using [ControllerBuddy](https://controllerbuddy.org) with [DCS World](https://www.digitalcombatsimulator.com) even more comfortable.  
