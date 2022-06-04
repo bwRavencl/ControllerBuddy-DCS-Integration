@@ -26,7 +26,7 @@ function FileExists(path)
 end
 
 local controllerBuddyExe = os.getenv("CONTROLLER_BUDDY_EXECUTABLE")
-local profileDir = os.getenv("CONTROLLER_BUDDY_PROFILE_DIR")
+local profileDir = os.getenv("CONTROLLER_BUDDY_PROFILES_DIR")
 
 if controllerBuddyExe == nil or profileDir == nil then
     return
@@ -45,7 +45,7 @@ LuaExportActivityNextEvent = function(tCurrent)
         local profileFilename = 'DCS_'..data.Name..'.json'
 
         if FileExists(profileDir..'\\'..profileFilename) then
-            os.execute('start %CONTROLLER_BUDDY_EXECUTABLE% -autostart local -tray -profile "%CONTROLLER_BUDDY_PROFILE_DIR%\\'..profileFilename..'"')
+            os.execute('start %CONTROLLER_BUDDY_EXECUTABLE% -autostart local -tray -profile "%CONTROLLER_BUDDY_PROFILES_DIR%\\'..profileFilename..'"')
         end
 
         lastName = data.Name
