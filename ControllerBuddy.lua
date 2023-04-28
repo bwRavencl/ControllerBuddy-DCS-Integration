@@ -25,8 +25,8 @@ function FileExists(path)
    end
 end
 
-local controllerBuddyExe = os.getenv("CONTROLLER_BUDDY_EXECUTABLE")
-local profileDir = os.getenv("CONTROLLER_BUDDY_PROFILES_DIR")
+local controllerBuddyExe = os.getenv('CONTROLLER_BUDDY_EXECUTABLE')
+local profileDir = os.getenv('CONTROLLER_BUDDY_PROFILES_DIR')
 
 if controllerBuddyExe == nil or profileDir == nil then
     return
