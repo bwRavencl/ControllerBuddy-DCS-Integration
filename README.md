@@ -1,14 +1,17 @@
 ## ControllerBuddy-DCS-Integration
 
 #### License Information:
+
 GNU General Public License v3.0
 
 #### Description:
+
 This is a small Lua script for your DCS `Scripts` folder that makes using [ControllerBuddy](https://controllerbuddy.org) with [DCS World](https://www.digitalcombatsimulator.com) even more comfortable.  
 The script automatically starts ControllerBuddy in local mode with a profile that matches the current player aircraft when entering a mission.  
 When the player switches between aircraft the script will automatically intruct ControllerBuddy to load the correct profile for the newly selected aircraft.
 
 #### Instructions:
+
 1. Create a new folder called `ControllerBuddy-DCS-Integration` inside your `Saved Games\DCS\Scripts` folder.
 2. Place `ControllerBuddy.lua` into this newly created folder.
 3. Create a text file called `Export.lua` inside the `Saved Games\DCS\Scripts` with the following content:
