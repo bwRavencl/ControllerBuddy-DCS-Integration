@@ -16,13 +16,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 
 function FileExists(path)
-   local file = io.open(path, 'r')
+    local file = io.open(path, 'r')
 
-   if file ~= nil then io.close(file)
-       return true
-   else
-       return false
-   end
+    if file ~= nil then io.close(file)
+        return true
+    else
+        return false
+    end
 end
 
 local controllerBuddyExe = os.getenv('CONTROLLER_BUDDY_EXECUTABLE')
