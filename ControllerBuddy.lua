@@ -36,19 +36,21 @@ local prevExport = {}
 prevExport.LuaExportActivityNextEvent = LuaExportActivityNextEvent
 prevExport.LuaExportBeforeNextFrame = LuaExportBeforeNextFrame
 
-local lastName = nil
-
 LuaExportActivityNextEvent = function(tCurrent)
-    local data = LoGetSelfData()
+    local playerPlaneId = LoGetPlayerPlaneId()
 
-    if data and lastName ~= data.Name then
-        local profileFilename = 'DCS_'..data.Name..'.json'
+    if lastPlayerPlaneId ~= playerPlaneId then
+        local selfData = LoGetSelfData()
 
-        if FileExists(profileDir..'\\'..profileFilename) then
-            os.execute('start %CONTROLLER_BUDDY_EXECUTABLE% -autostart local -tray -profile "%CONTROLLER_BUDDY_PROFILES_DIR%\\'..profileFilename..'"')
+        if selfData then
+            local profileFilename = 'DCS_'..selfData.Name..'.json'
+
+            if FileExists(profileDir..'\\'..profileFilename) then
+                os.execute('start %CONTROLLER_BUDDY_EXECUTABLE% -autostart local -tray -profile "%CONTROLLER_BUDDY_PROFILES_DIR%\\'..profileFilename..'"')
+            end
+
+            lastPlayerPlaneId = playerPlaneId
         end
-
-        lastName = data.Name
     end
 
     pcall(function()
