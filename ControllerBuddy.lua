@@ -49,10 +49,6 @@ LuaExportActivityNextEvent = function(tCurrent)
                 os.execute('start %CONTROLLER_BUDDY_EXECUTABLE% -autostart local -tray -profile "%CONTROLLER_BUDDY_PROFILES_DIR%\\'..profileFilename..'"')
             end
 
-            for i = 0, 1, 1 do
-                LoSetCommand(237) -- iCommandViewTempCockpitToggle
-            end
-
             LoSetCommand(177) -- iCommandViewAngleDefault
 
             lastPlayerPlaneId = playerPlaneId
