@@ -28,6 +28,17 @@ end
 local controllerBuddyExe = os.getenv('CONTROLLER_BUDDY_EXECUTABLE')
 local profileDir = os.getenv('CONTROLLER_BUDDY_PROFILES_DIR')
 
+local pathSeparator = '\\'
+local startArg = ''
+if os.getenv('WINECONFIGDIR') or
+    os.getenv('WINEDATADIR') or
+    os.getenv('WINEHOMEDIR') or
+    os.getenv('WINELOADER') or
+    os.getenv('WINEPREFIX') ~= nil then
+    pathSeparator = '/'
+    startArg = '/unix'
+end
+
 if controllerBuddyExe == nil or profileDir == nil then
     return
 end
@@ -46,7 +57,7 @@ LuaExportActivityNextEvent = function(tCurrent)
             local profileFilename = 'DCS_'..selfData.Name..'.json'
 
             if FileExists(profileDir..'\\'..profileFilename) then
-                os.execute('start %CONTROLLER_BUDDY_EXECUTABLE% -autostart local -tray -profile "%CONTROLLER_BUDDY_PROFILES_DIR%\\'..profileFilename..'"')
+                os.execute('start '..startArg..' %CONTROLLER_BUDDY_EXECUTABLE% -autostart local -tray -profile "%CONTROLLER_BUDDY_PROFILES_DIR%'..pathSeparator..profileFilename..'"')
             end
 
             lastPlayerPlaneId = playerPlaneId
