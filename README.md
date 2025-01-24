@@ -21,4 +21,4 @@ Please refer to the [author's profile repository](https://github.com/bwRavencl/C
 
 ## License Information
 
-GNU General Public License v3.0
+[GNU General Public License v3.0](LICENSE)
