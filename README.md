@@ -8,6 +8,10 @@ The script automatically starts ControllerBuddy in local mode with a profile tha
 
 ## ⬇️ Installing
 
+> [!TIP]
+> For the easiest way to install and update, use the [ControllerBuddy-Install-Script](https://github.com/bwRavencl/ControllerBuddy-Install-Script).  
+> It automates all the steps below and much more!
+
 1. Create a new folder named `ControllerBuddy-DCS-Integration` inside your `Saved Games\DCS\Scripts` folder.
 2. Place `ControllerBuddy.lua` into this new folder.
 3. Create a text file named `Export.lua` inside your `Saved Games\DCS\Scripts` folder with the following content:
