@@ -15,7 +15,9 @@ The script automatically starts ControllerBuddy in local mode with a profile tha
 1. Create a new folder named `ControllerBuddy-DCS-Integration` inside your `Saved Games\DCS\Scripts` folder.
 2. Place `ControllerBuddy.lua` into this new folder.
 3. Create a text file named `Export.lua` inside your `Saved Games\DCS\Scripts` folder with the following content:
-   `dofile(lfs.writedir()..[[Scripts\ControllerBuddy-DCS-Integration\ControllerBuddy.lua]])`  
+   ```lua
+   dofile(lfs.writedir()..[[Scripts\ControllerBuddy-DCS-Integration\ControllerBuddy.lua]])
+   ```
    If a file named `Export.lua` already exists, simply append the above line to the end of the file.
 4. Create a new environment variable named `CONTROLLER_BUDDY_EXECUTABLE` pointing to the `ControllerBuddy.exe` executable in your ControllerBuddy installation folder.
 5. Create a second environment variable named `CONTROLLER_BUDDY_PROFILES_DIR` pointing to a folder containing your ControllerBuddy profiles.
