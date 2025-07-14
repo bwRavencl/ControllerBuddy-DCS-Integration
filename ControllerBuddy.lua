@@ -15,49 +15,161 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 
-function FileExists(path)
-    local file = io.open(path, 'r')
-
-    if file ~= nil then io.close(file)
-        return true
-    else
-        return false
-    end
+local function CBLog(level, str)
+    log.write('CONTROLLER_BUDDY', level, str)
 end
 
-local controllerBuddyExe = os.getenv('CONTROLLER_BUDDY_EXECUTABLE')
-local profileDir = os.getenv('CONTROLLER_BUDDY_PROFILES_DIR')
+CBLog(log.INFO, 'Initializing ControllerBuddy-DCS-Integration')
 
-if controllerBuddyExe == nil or profileDir == nil then
-    return
-end
+package.path = package.path..';.\\LuaSocket\\?.lua'
+local socket = require('socket')
+
+local isLinux = os.execute('reg query "HKCU\\Software\\Wine" >nul 2>&1') == 0
+CBLog(log.INFO, 'Running on '..(isLinux and 'Linux' or 'Windows'))
 
 local prevExport = {}
 prevExport.LuaExportActivityNextEvent = LuaExportActivityNextEvent
 prevExport.LuaExportBeforeNextFrame = LuaExportBeforeNextFrame
 
 LuaExportActivityNextEvent = function(tCurrent)
+    local function CallPrevExportAndReturn()
+        pcall(function()
+            if prevExport.LuaExportActivityNextEvent then
+                prevExport.LuaExportActivityNextEvent(tCurrent)
+            end
+        end)
+
+        return tCurrent + 0.1
+    end
+
+    local function FileExists(path)
+        local file = io.open(path, 'r')
+        if file ~= nil then 
+            file:close()
+            return true
+        end
+
+        return false
+    end
+
     local playerPlaneId = LoGetPlayerPlaneId()
 
-    if lastPlayerPlaneId ~= playerPlaneId then
-        local selfData = LoGetSelfData()
+    if lastPlayerPlaneId == playerPlaneId then
+        return CallPrevExportAndReturn()
+    end
 
-        if selfData then
-            local profileFilename = 'DCS_'..selfData.Name..'.json'
+    lastPlayerPlaneId = playerPlaneId
 
-            if FileExists(profileDir..'\\'..profileFilename) then
-                os.execute('start %CONTROLLER_BUDDY_EXECUTABLE% -autostart local -tray -profile "%CONTROLLER_BUDDY_PROFILES_DIR%\\'..profileFilename..'"')
-            end
+    local selfData = LoGetSelfData()
+    if not selfData then
+        return CallPrevExportAndReturn()
+    end
 
-            lastPlayerPlaneId = playerPlaneId
+    local profileFilename = 'DCS_'..selfData.Name..'.json'
+
+    local controllerBuddyExe = os.getenv('CONTROLLER_BUDDY_EXECUTABLE')
+    if not isLinux then
+        if controllerBuddyExe == nil then
+            CBLog(log.WARNING, 'CONTROLLER_BUDDY_EXECUTABLE environment variable is not set')
+            return CallPrevExportAndReturn()
+        end
+
+        if not FileExists(controllerBuddyExe) then
+            CBLog(log.ERROR, 'ControllerBuddy executable does not exist: '..controllerBuddyExe)
+            return CallPrevExportAndReturn()
         end
     end
 
-    pcall(function()
-        if prevExport.LuaExportActivityNextEvent then
-            prevExport.LuaExportActivityNextEvent(tCurrent)
-        end
-    end)
+    local profileDir = os.getenv('CONTROLLER_BUDDY_PROFILES_DIR')
+    if profileDir == nil then
+        CBLog(log.WARNING, 'CONTROLLER_BUDDY_PROFILES_DIR environment variable is not set')
+        return CallPrevExportAndReturn()
+    end
 
-    return tCurrent + 0.1
+    if isLinux and not string.match(profileDir, '^/.*') then
+        CBLog(log.ERROR, 'CONTROLLER_BUDDY_PROFILES_DIR must be an absolute path on Linux')
+        return CallPrevExportAndReturn()
+    end
+
+    if not isLinux then
+        profileDir = string.gsub(profileDir, '\\+$', '')
+    elseif profileDir ~= '/' then
+        profileDir = string.gsub(profileDir, '/+$', '')
+    end
+
+    local profilePath = profileDir..(isLinux and '/' or '\\')..profileFilename
+    local windowsProfilePath = isLinux and 'Z:'..string.gsub(string.sub(profilePath, 2), '/', '\\') or profilePath
+
+    if not FileExists(windowsProfilePath) then
+        CBLog(log.WARNING, 'Profile file does not exist: '..windowsProfilePath)
+        return CallPrevExportAndReturn()
+    end
+
+    local tmpDir
+    if isLinux then
+        tmpDir = 'Z:\\tmp'
+    else
+        tmpDir = os.getenv('TMP')
+        if tmpDir == nil then
+            CBLog(log.WARNING, 'TMP environment variable is not set')
+            return CallPrevExportAndReturn()
+        end
+        tmpDir = string.gsub(tmpDir, '\\+$', '')
+    end
+    local lockFilePath = tmpDir..'\\ControllerBuddy.lock'
+    if not isLinux and not FileExists(lockFilePath) then
+        if controllerBuddyExe ~= nil then
+            os.execute('start %CONTROLLER_BUDDY_EXECUTABLE% -autostart local -tray -profile "'..profilePath..'"')
+        end
+    else
+        local file, err = io.open(lockFilePath, 'r')
+        if not file then
+            CBLog(log.ERROR, 'Could not open lockfile: '..err)
+            return CallPrevExportAndReturn()
+        end
+
+        local portLine = file:read('*l')
+        local tokenLine = file:read('*l')
+        file:close()
+
+        if not portLine or not tokenLine then
+            CBLog(log.ERROR, 'Invalid lockfile')
+            return CallPrevExportAndReturn()
+        end
+
+        local port = tonumber(portLine)
+        if not port then
+            CBLog(log.ERROR, 'Invalid port in lockfile')
+            return CallPrevExportAndReturn()
+        end
+
+        local client = assert(socket.tcp())
+        client:settimeout(5)
+
+        local ok, connectErr = client:connect('127.0.0.1', port)
+        if not ok then
+            CBLog(log.ERROR, 'Connection failed: '..connectErr)
+            return CallPrevExportAndReturn()
+        end
+
+    client:send(tokenLine..'\n'..'INIT\n'..'-autostart\n'..'local\n'..'-profile\n'..profilePath..'\n'..'EOF\n')
+
+        local ackReceived = false
+        for i = 1, 5 do
+            local response, recvErr, partial = client:receive('*l')
+            response = response or partial
+            if response == 'ACK' then
+                ackReceived = true
+                break
+            end
+        end
+
+        client:close()
+
+        if not ackReceived then
+            CBLog(log.ERROR, 'Did not receive ACK')
+        end
+    end
+
+    return CallPrevExportAndReturn()
 end

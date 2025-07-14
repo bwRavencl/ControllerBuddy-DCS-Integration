@@ -4,12 +4,16 @@
 
 This is a small Lua script for your DCS `Scripts` folder that makes using [ControllerBuddy](https://controllerbuddy.org) with [DCS World](https://www.digitalcombatsimulator.com) even more comfortable.
 
-The script automatically starts ControllerBuddy in local mode with a profile that matches the current player aircraft when entering a mission.
+When you enter a mission, the script automatically starts ControllerBuddy in local mode and loads the profile that matches your current player aircraft. 
+If ControllerBuddy is already running, it will simply switch to the correct profile for you.
+
+**Note for Linux users:**  
+The script works with DCS on Linux (Wine), but cannot auto-start ControllerBuddy in this environment. Please start ControllerBuddy manually before launching DCS.
 
 ## ⬇️ Installing
 
 > [!TIP]
-> For the easiest way to install and update, use the [ControllerBuddy-Install-Script](https://github.com/bwRavencl/ControllerBuddy-Install-Script).  
+> For the easiest way to install and update on Windows, use the [ControllerBuddy-Install-Script](https://github.com/bwRavencl/ControllerBuddy-Install-Script).  
 > It automates all the steps below and much more!
 
 1. Create a new folder named `ControllerBuddy-DCS-Integration` inside your `Saved Games\DCS\Scripts` folder.
