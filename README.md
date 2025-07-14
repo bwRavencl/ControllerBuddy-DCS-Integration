@@ -2,7 +2,7 @@
 
 ## 📖 Description
 
-This is a small Lua script for your DCS `Scripts` folder that makes using [ControllerBuddy](https://controllerbuddy.org) with [DCS World](https://www.digitalcombatsimulator.com) even more comfortable.
+This Lua script integrates [ControllerBuddy](https://controllerbuddy.org) with [DCS World](https://www.digitalcombatsimulator.com), making it easier and more seamless to use.
 
 When you enter a mission, the script automatically starts ControllerBuddy in local mode and loads the profile that matches your current player aircraft. 
 If ControllerBuddy is already running, it will simply switch to the correct profile for you.
@@ -10,7 +10,7 @@ If ControllerBuddy is already running, it will simply switch to the correct prof
 **Note for Linux users:**  
 The script works with DCS on Linux (Wine), but cannot auto-start ControllerBuddy in this environment. Please start ControllerBuddy manually before launching DCS.
 
-## ⬇️ Installing
+## ⬇️ Installation
 
 > [!TIP]
 > For the easiest way to install and update on Windows, use the [ControllerBuddy-Install-Script](https://github.com/bwRavencl/ControllerBuddy-Install-Script).  
@@ -23,11 +23,12 @@ The script works with DCS on Linux (Wine), but cannot auto-start ControllerBuddy
    dofile(lfs.writedir()..[[Scripts\ControllerBuddy-DCS-Integration\ControllerBuddy.lua]])
    ```
    If a file named `Export.lua` already exists, simply append the above line to the end of the file.
-4. Create a new environment variable named `CONTROLLER_BUDDY_EXECUTABLE` pointing to the `ControllerBuddy.exe` executable in your ControllerBuddy installation folder.
-5. Create a second environment variable named `CONTROLLER_BUDDY_PROFILES_DIR` pointing to a folder containing your ControllerBuddy profiles.
-6. In order for ControllerBuddy to be able to match between a DCS aircraft and a profile, the profile filename must follow the following scheme: `DCS_$DCS_INTERNAL_AIRCRAFT_NAME.json` (e.g. `DCS_FA-18C_hornet.json`)
+4. Create a new environment variable named `CONTROLLER_BUDDY_EXECUTABLE` pointing to the `ControllerBuddy.exe` executable in your ControllerBuddy installation folder.  
+   (This step can be skipped on Linux.)
+5. Create a second environment variable named `CONTROLLER_BUDDY_PROFILES_DIR` pointing to the folder containing your ControllerBuddy profiles.
+6. Profile filenames must use the following format: `DCS_<DCS_INTERNAL_AIRCRAFT_NAME>.json` (for example: `DCS_FA-18C_hornet.json`).
 
-Please refer to the [author's profile repository](https://github.com/bwRavencl/ControllerBuddy-Profiles) for a complete set of correctly named ControllerBuddy profiles for DCS.
+For a complete set of ControllerBuddy profiles for DCS, check out the official [ControllerBuddy-Profiles](https://github.com/bwRavencl/ControllerBuddy-Profiles) repository.
 
 ## ⚖️ License
 
