@@ -155,8 +155,8 @@ LuaExportActivityNextEvent = function(tCurrent)
     client:send(tokenLine..'\n'..'INIT\n'..'-autostart\n'..'local\n'..'-profile\n'..profilePath..'\n'..'EOF\n')
 
         local ackReceived = false
-        for i = 1, 5 do
-            local response, recvErr, partial = client:receive('*l')
+        for _ = 1, 5 do
+            local response, _, partial = client:receive('*l')
             response = response or partial
             if response == 'ACK' then
                 ackReceived = true
