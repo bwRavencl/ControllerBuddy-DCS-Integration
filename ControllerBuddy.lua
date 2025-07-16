@@ -44,7 +44,7 @@ LuaExportActivityNextEvent = function(tCurrent)
 
     local function FileExists(path)
         local file = io.open(path, 'r')
-        if file ~= nil then 
+        if file ~= nil then
             file:close()
             return true
         end
