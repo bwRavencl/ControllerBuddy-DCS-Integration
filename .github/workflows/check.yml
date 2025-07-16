@@ -1,0 +1,26 @@
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  luacheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run Luacheck
+        uses: lunarmodules/luacheck@v1
+        with:
+          args: >
+            --read-globals
+            LoGetPlayerPlaneId
+            LoGetSelfData
+            LuaExportActivityNextEvent
+            LuaExportBeforeNextFrame
+            lastPlayerPlaneId
+            log
+            --globals
+            LuaExportActivityNextEvent
+            lastPlayerPlaneId
+            -- .
