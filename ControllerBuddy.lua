@@ -16,7 +16,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 
 local function CBLog(level, str)
-    log.write('CONTROLLER_BUDDY', level, str)
+    log.write('CONTROLLERBUDDY', level, str)
 end
 
 local function FileExists(path)
