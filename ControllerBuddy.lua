@@ -19,13 +19,23 @@ local function CBLog(level, str)
     log.write('CONTROLLER_BUDDY', level, str)
 end
 
+local function FileExists(path)
+    local file = io.open(path, 'r')
+    if file ~= nil then
+        file:close()
+        return true
+    end
+
+    return false
+end
+
 CBLog(log.INFO, 'Initializing ControllerBuddy-DCS-Integration')
 
 package.path = package.path..';.\\LuaSocket\\?.lua'
 local socket = require('socket')
 
-local isLinux = os.execute('reg query "HKCU\\Software\\Wine" >nul 2>&1') == 0
-CBLog(log.INFO, 'Running on '..(isLinux and 'Linux' or 'Windows'))
+local isWine = FileExists('C:\\windows\\system32\\wineboot.exe')
+CBLog(log.INFO, 'Running on '..(isWine and 'Wine' or 'Windows'))
 
 local prevExport = {}
 prevExport.LuaExportActivityNextEvent = LuaExportActivityNextEvent
@@ -40,16 +50,6 @@ LuaExportActivityNextEvent = function(tCurrent)
         end)
 
         return tCurrent + 0.1
-    end
-
-    local function FileExists(path)
-        local file = io.open(path, 'r')
-        if file ~= nil then
-            file:close()
-            return true
-        end
-
-        return false
     end
 
     local playerPlaneId = LoGetPlayerPlaneId()
@@ -68,7 +68,7 @@ LuaExportActivityNextEvent = function(tCurrent)
     local profileFilename = 'DCS_'..selfData.Name..'.json'
 
     local controllerBuddyExe = os.getenv('CONTROLLER_BUDDY_EXECUTABLE')
-    if not isLinux then
+    if not isWine then
         if controllerBuddyExe == nil then
             CBLog(log.WARNING, 'CONTROLLER_BUDDY_EXECUTABLE environment variable is not set')
             return CallPrevExportAndReturn()
@@ -86,19 +86,19 @@ LuaExportActivityNextEvent = function(tCurrent)
         return CallPrevExportAndReturn()
     end
 
-    if isLinux and not string.match(profileDir, '^/.*') then
-        CBLog(log.ERROR, 'CONTROLLER_BUDDY_PROFILES_DIR must be an absolute path on Linux')
+    if isWine and not string.match(profileDir, '^/.*') then
+        CBLog(log.ERROR, 'CONTROLLER_BUDDY_PROFILES_DIR must be an absolute native Linux path on Wine')
         return CallPrevExportAndReturn()
     end
 
-    if not isLinux then
+    if not isWine then
         profileDir = string.gsub(profileDir, '\\+$', '')
     elseif profileDir ~= '/' then
         profileDir = string.gsub(profileDir, '/+$', '')
     end
 
-    local profilePath = profileDir..(isLinux and '/' or '\\')..profileFilename
-    local windowsProfilePath = isLinux and 'Z:'..string.gsub(string.sub(profilePath, 2), '/', '\\') or profilePath
+    local profilePath = profileDir..(isWine and '/' or '\\')..profileFilename
+    local windowsProfilePath = isWine and 'Z:'..string.gsub(string.sub(profilePath, 2), '/', '\\') or profilePath
 
     if not FileExists(windowsProfilePath) then
         CBLog(log.WARNING, 'Profile file does not exist: '..windowsProfilePath)
@@ -106,7 +106,7 @@ LuaExportActivityNextEvent = function(tCurrent)
     end
 
     local tmpDir
-    if isLinux then
+    if isWine then
         tmpDir = 'Z:\\tmp'
     else
         tmpDir = os.getenv('TMP')
@@ -117,7 +117,7 @@ LuaExportActivityNextEvent = function(tCurrent)
         tmpDir = string.gsub(tmpDir, '\\+$', '')
     end
     local lockFilePath = tmpDir..'\\ControllerBuddy.lock'
-    if not isLinux and not FileExists(lockFilePath) then
+    if not isWine and not FileExists(lockFilePath) then
         if controllerBuddyExe ~= nil then
             os.execute('start %CONTROLLER_BUDDY_EXECUTABLE% -autostart local -tray -profile "'..profilePath..'"')
         end
