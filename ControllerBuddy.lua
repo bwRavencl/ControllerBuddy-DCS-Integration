@@ -98,11 +98,14 @@ LuaExportActivityNextEvent = function(tCurrent)
     end
 
     local profilePath = profileDir..(isWine and '/' or '\\')..profileFilename
-    local windowsProfilePath = isWine and 'Z:'..string.gsub(profilePath, '/', '\\') or profilePath
 
-    if not FileExists(windowsProfilePath) then
-        CBLog(log.WARNING, 'Profile file does not exist: '..windowsProfilePath)
-        return CallPrevExportAndReturn()
+    if not isWine or not string.match(profileDir, '^/app/share/ControllerBuddy%-Profiles') then
+        local windowsProfilePath = isWine and 'Z:'..string.gsub(profilePath, '/', '\\') or profilePath
+
+        if not FileExists(windowsProfilePath) then
+            CBLog(log.WARNING, 'Profile file does not exist: '..windowsProfilePath)
+            return CallPrevExportAndReturn()
+        end
     end
 
     local tmpDir
