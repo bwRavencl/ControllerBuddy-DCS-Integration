@@ -98,7 +98,7 @@ LuaExportActivityNextEvent = function(tCurrent)
     end
 
     local profilePath = profileDir..(isWine and '/' or '\\')..profileFilename
-    local windowsProfilePath = isWine and 'Z:'..string.gsub(string.sub(profilePath, 2), '/', '\\') or profilePath
+    local windowsProfilePath = isWine and 'Z:'..string.gsub(profilePath, '/', '\\') or profilePath
 
     if not FileExists(windowsProfilePath) then
         CBLog(log.WARNING, 'Profile file does not exist: '..windowsProfilePath)
