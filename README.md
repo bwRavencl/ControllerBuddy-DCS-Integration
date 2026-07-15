@@ -8,7 +8,8 @@ When you enter a mission, the script automatically starts ControllerBuddy in loc
 If ControllerBuddy is already running, it will simply switch to the correct profile for you.
 
 **Note for Linux users:**  
-The script works with DCS on Linux (Wine), but cannot auto-start ControllerBuddy in this environment. Please start ControllerBuddy manually before launching DCS.
+The script works with DCS on Linux (Wine), but cannot auto-start ControllerBuddy in this environment.
+Please start ControllerBuddy manually before launching DCS.
 
 ## ⬇️ Installation
 
