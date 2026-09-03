@@ -4,7 +4,7 @@ on:
       - master
 
 jobs:
-  luacheck:
+  check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -24,3 +24,7 @@ jobs:
             LuaExportActivityNextEvent
             lastPlayerPlaneId
             -- .
+      - name: Lint Markdown Files
+        uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff #v24
+        with:
+          globs: '**/*.md'
